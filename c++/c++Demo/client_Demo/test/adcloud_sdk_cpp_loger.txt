@@ -1,0 +1,9 @@
+[2014-09-03 09:17:42 DEBUG .\src\adcloud_client.cpp:182] appid:app1
+[2014-09-03 09:17:42 INFO .\src\net\socket.cpp:68] service.ics.aodianyun.com:8365is connected
+[2014-09-03 09:17:42 DEBUG .\src\adcloud_client.cpp:124] 2
+[2014-09-03 09:17:42 INFO .\src\adcloud_client.cpp:130] gate.addr.115.29.162.108:9300
+[2014-09-03 09:17:42 INFO .\src\adcloud_client.cpp:130] gate.addr.115.29.165.213:9300
+[2014-09-03 09:17:42 INFO .\src\net\socket.cpp:68] 115.29.162.108:9300is connected
+[2014-09-03 09:17:43 INFO .\src\net\socket.cpp:68] 115.29.165.213:9300is connected
+[2014-09-03 09:17:43 INFO .\src\net\socket.cpp:68] 115.29.162.108:9300is connected
+[2014-09-03 09:17:43 DEBUG .\src\adcloud_client.cpp:62] gate.open.connected
