@@ -1,0 +1,79 @@
+
+	加载swf 
+		flash_adcloud_client.swf
+	
+	成员函数以及回调
+		flash_Connect
+		flash_Send
+		flash_Close
+		function js_OnOpen( id )
+		function js_OpenFail( id ,err )
+		function js_OnClose( id ,err )
+		function js_OnMessage( id,str )
+		
+		
+	加载swf
+		flash_adcloud_client.swf
+		示例：
+		<noscript>
+            <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%" id="flash_adcloud_client">
+                <param name="movie" value="flash_adcloud_client.swf" />
+                <param name="quality" value="high" />
+                <param name="bgcolor" value="#ffffff" />
+                <param name="allowScriptAccess" value="sameDomain" />
+                <param name="allowFullScreen" value="true" />
+                <!--[if !IE]>-->
+                <object type="application/x-shockwave-flash" data="flash_adcloud_client.swf" width="100%" height="100%">
+                    <param name="quality" value="high" />
+                    <param name="bgcolor" value="#ffffff" />
+                    <param name="allowScriptAccess" value="sameDomain" />
+                    <param name="allowFullScreen" value="true" />
+                <!--<![endif]-->
+                <!--[if gte IE 6]>-->
+                    <p> 
+                        Either scripts and active content are not permitted to run or Adobe Flash Player version
+                        10.2.0 or greater is not installed.
+                    </p>
+                <!--<![endif]-->
+                    <a href="http://www.adobe.com/go/getflashplayer">
+                        <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash Player" />
+                    </a>
+                <!--[if !IE]>-->
+                </object>
+                <!--<![endif]-->
+            </object>
+        </noscript> 
+		
+	成员函数以及回调
+		flash_Connect(appid:String,addr:String):int
+		示例：
+			var flash_obj=swfobject.getObjectById("flash_adcloud_client");
+            var id = flash_obj.flash_Connect("app_demo","service.ics.aodianyun.com:8365");
+			
+		flash_Send(id:int,str:String):Boolean
+		示例：
+			flash_obj.flash_Send(id,"hello world!");
+			
+		flash_Close(id:int):void
+		示例：
+			flash_obj.flash_Close(id);
+			
+		function js_OnOpen( id )
+		当执行flash_obj.flash_Connect 且连接服务器成功后回调，表示连接已经建立
+		示例：
+			function js_OnOpen( id ){
+				alert("connect server sucess!");
+				flash_obj.flash_Send(id,"hello,this is No.1 !");
+			}
+		
+		function js_OpenFail( id ,err )
+		当执行flash_obj.flash_Connect 且连接服务器成功后回调，表示连接建立失败
+		err ,是错误描述
+		
+		function js_OnClose( id ,err )
+		当连接非主动关闭时触发
+		err 是连接关闭原因描述
+		
+		function js_OnMessage( id,str )
+		当收到数据时触发
+		str 是字符串

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark"  creationComplete="application1_creationCompleteHandler(event)"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" implements="adcloud.AdCloudClientListener">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import adcloud.AdCloudClient;
+			
+			import mx.events.FlexEvent;
+			public function OnOpen():void{
+				id_text_.appendText("建立连连成功！\r\n");
+				SetStatus(false);
+			}
+			public function OnClose(err:String):void{
+				id_text_.appendText("与服务器连接关闭！\r\n");
+				SetStatus(true);
+			}
+			public function OnMessage(bytes:ByteArray):void{
+				id_text_.appendText("收到服务器数据 " +  bytes.toString() + "\r\n");
+			}
+			public function OnOpenFail(err:String):void{
+				id_text_.appendText("建立连接失败： " +  err + "\r\n");
+				id_text_.appendText("这种情况一般是服务端对应的appid 应用 没有启动或者启动失败，请确认服务端启动成功后再刷新重试！\r\n");
+				SetStatus(true);
+			}
+			private var cli_:AdCloudClient = null;
+			
+			protected function application1_creationCompleteHandler(event:FlexEvent):void
+			{
+				SetStatus(true);
+			}
+			
+			public function SetStatus ( status:Boolean ):void {
+				id_enter.enabled = status;
+				id_out.enabled = !status;
+			}
+			protected function id_enter_clickHandler(event:MouseEvent):void
+			{
+				
+				var arr:Vector.<String> = new Vector.<String>();
+				arr.push("service.ics.aodianyun.com:8365");
+				cli_ = new AdCloudClient(arr,id_appid.text,this);
+				cli_.Open();
+				SetStatus(false);
+				
+			}
+			
+			protected function id_out_clickHandler(event:MouseEvent):void
+			{
+				if(cli_ ){
+					cli_.Close();
+					id_text_.appendText("关闭与服务器连接！\r\n");
+					SetStatus(true);
+				}
+				
+			}
+			
+		]]>
+	</fx:Script>
+	<s:TextArea id="id_text_" y="46" width="549" height="554"/>
+	<s:Button id="id_enter" x="382" y="7" height="25" label="登陆" click="id_enter_clickHandler(event)"/>
+	<s:TextInput id="id_appid" x="99" y="10" width="263"/>
+	<s:RichText x="21" y="18" width="86" height="20" text="应用编号："/>
+	<s:Button id="id_out" x="460" y="2" width="80" height="28" label="退出"
+			  click="id_out_clickHandler(event)"/>
+</s:Application>

@@ -1,0 +1,11 @@
+	1.demo下载解压
+	2.启动服务器：
+	    a.配置svr目录的 config.js 内 appid 与 apppwd,这2个值可以通过平台免费申请到
+		b.点击 run.bat 启动服务器应用
+		
+	3.在浏览器打开链接：
+		http://demo.aodianyun.com/ics/html_demo/test.html
+		输入 appid 与apppwd 就可以体验啦！
+		客户端的相关源码在 html目录中
+	
+	

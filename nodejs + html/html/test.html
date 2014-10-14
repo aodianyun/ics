@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>智能通讯ICS测试DEMO</title>
+<link rel="stylesheet" type="text/css" href="history/history.css" />
+<link rel="stylesheet" type="text/css" href="ICS.css" />
+<script type="text/javascript" src="history/history.js"></script>
+<script type="text/javascript" src="swfobject.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="json.js"></script>
+</head>
+<body onload="onBodyReady()">
+<!-- top start -->
+<div class="menu">
+  <div class="menuContent">
+  <div class="logo"><img src="img/logo1.png" /></div>
+  <div class="nav">
+    奥点云—智能通讯ICS测试DEMO
+  </div>
+  <div class="home"><a href="http://www.aodiansoft.com" target="_blank">奥点首页</a></div>
+  <div class="cb"></div>
+  </div>
+</div>
+<!-- top end -->
+
+<div class="buttom" id="buttom">
+<!-- right start -->
+  <div class="right">
+  <div id="paramet">应用地址：
+      <input name="appAdress" type="text" id="appAdress" value="service.ics.aodianyun.com:8365" size="53" />
+<br/><span class="orange">*</span>应用ID:<input name="appId" type="text" id="appId" size="20" />
+<input type="button" value="登录" id="load" /><input type="button" value="退出" id="quit" />
+  </div>
+    <div class="nick-box">
+    <div class="online-num"><img src="img/userico.png" /><span class="ml5" id="userNum">0</span></div>
+      <div class="nick-box-inner">昵称：<input id="nick" type="text" size="8" />&nbsp;&nbsp;&nbsp;<button id="modNick">修改昵称</button></div>
+    </div>
+    <div class="comment-box" id="commentBox">
+      <ul id="commentList"></ul>
+    </div>
+    <div class="write-box">
+      <div class="write-box-inner">
+        <div class="textarea-box">
+          <textarea cols="98" rows="4" id="msg" onkeydown="this.value=this.value.slice(0,100);" onkeyup="this.value=this.value.slice(0,100);"></textarea>
+        </div>
+        <div class="button-box">
+          <input type="button" value="发送" id="sendMsg" />
+        </div>
+        <div class="cb"></div>
+      </div>
+    </div>
+    <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="1" height="1" id="flash_adcloud_client" style="width:1px; height:1px;">
+            <param name="movie" value="flash_adcloud_client.swf" />
+            <param name="quality" value="high" />
+            <param name="bgcolor" value="#ffffff" />
+            <param name="allowScriptAccess" value="sameDomain" />
+            <param name="allowFullScreen" value="true" />
+            <!--[if !IE]>-->
+            <object type="application/x-shockwave-flash" data="flash_adcloud_client.swf" width="1" height="1" style="width:1px; height:1px;">
+                <param name="quality" value="high" />
+                <param name="bgcolor" value="#ffffff" />
+                <param name="allowScriptAccess" value="sameDomain" />
+                <param name="allowFullScreen" value="true" />
+            <!--<![endif]-->
+            <!--[if gte IE 6]>-->
+                <p> 
+                    Either scripts and active content are not permitted to run or Adobe Flash Player version
+                    10.2.0 or greater is not installed.
+                </p>
+            <!--<![endif]-->
+                <a href="http://www.adobe.com/go/getflashplayer">
+                    <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash Player" />
+                </a>
+            <!--[if !IE]>-->
+            </object>
+            <!--<![endif]-->
+        </object>
+  </div>
+<!-- right end -->
+
+</div>
+
+
+
+
+
+<script type="text/javascript">
+
+var flash_obj = null;
+var id;
+var uin;
+var LocString = String(window.document.location.href);
+function getQueryStr(str) {
+		var rs = new RegExp("(^|)" + str + "=([^&]*)(&|$)", "gi").exec(LocString), tmp;
+		if (tmp = rs) {
+			return tmp[2];
+		}      
+		return "";
+	}
+//			appAdress.value = getQueryStr("addr");
+//		appId.value = getQueryStr("app");
+//		appPs.value = getQueryStr("pwd");
+var fun = function(){
+	flash_obj=swfobject.getObjectById("flash_adcloud_client");
+	if( flash_obj && flash_obj.flash_Connect )
+		id = flash_obj.flash_Connect(appId.value,appAdress.value);
+	if(!id ||  id== -1){
+		  setTimeout(fun,100);
+	}
+};
+//setTimeout(fun,100);
+var m_bopen=false;
+function js_OnOpen( id ){
+	showMsg("登陆服务器成功!");
+	m_bopen=true;
+	document.getElementById("load").disabled = true;
+	document.getElementById("quit").disabled = false;
+
+}
+function js_OnClose( id ,err ){
+	showMsg("与服务器失去连接!");
+	m_bopen=false;
+	document.getElementById("load").disabled = false;
+	document.getElementById("quit").disabled = true;
+}
+function js_OpenFail( id ,err ){
+   showMsg("登陆失败!" + err );
+   m_bopen=false;
+   document.getElementById("load").disabled = false;
+   document.getElementById("quit").disabled = true;
+}
+function js_OnMessage( id,str ){
+	var pkt = eval('(' + str + ')');
+	if( pkt.cmd == "chatText"  ){ //聊天
+		//console.log("pkt",pkt);
+		if(pkt.uin == uin){
+			var html = '<span class="myself">' +pkt.nick + '</span> :';
+		}
+		else{
+			var html = '<span class="other">' +pkt.nick + '</span> :';
+		}
+		html += htmlspecialchars(unescape(pkt.text));
+		showMsg(html);
+	}
+	else if( pkt.cmd == "userNum" ){ //在线人数
+		showUserNum(pkt.num);
+	}else if ( pkt.cmd == "modNick" ){}
+	else if(pkt.cmd == 'login'){
+		uin = pkt.uin;
+	}
+}
+
+// 发送聊天
+function send_chat ( text){
+	var pkt = {
+		cmd:"chatText",
+		text:text
+	}
+	 flash_obj.flash_Send(id,pkt.toJSONString());
+}
+
+function __send_chat(){
+  var msg = escape($("#msg").val());
+  if(msg == ''){
+    return;
+  }
+  send_chat( msg );
+  $("#msg").val('');
+}
+
+function send_modNick ( nick ){
+	var pkt = {
+		cmd:"modNick",
+		nick:nick
+	}
+	//console.log("mod nick",nick);
+	 flash_obj.flash_Send(id,pkt.toJSONString());
+}
+$(function(){
+	$("#sendMsg").click(function(){
+		__send_chat();
+	});
+	$('#msg').keypress(function(e){
+	  if(e.keyCode == 13){
+	    __send_chat();
+		return false;
+	  }
+	});
+});
+
+$(function(){
+	$("#modNick").click(function(){
+		var msg = $("#nick").val();
+
+		send_modNick(msg);
+		$("#nick").val("");
+		alert('修改成功');
+	});
+})
+
+$(function(){
+	$("#load").click(function(){
+		fun();	
+	});
+})
+
+$(function(){
+$("#quit").click(function(){
+		flash_obj=swfobject.getObjectById("flash_adcloud_client");
+	if( flash_obj && flash_obj.flash_Close && id != -1 ){
+		flash_obj.flash_Close(id);
+		id = -1;
+	}
+		document.getElementById("load").disabled = false;
+	document.getElementById("quit").disabled = true;
+	showMsg("退出服务器成功!");
+	});
+	
+})
+
+
+
+function showMsg(msg){
+  var num = $('#commentList li').length;
+  if(num >= 100){
+	  $('#commentList li').eq(0).remove();
+  }
+  var html = "<li>"+msg+"</li>";
+  $('#commentList').append(html);
+  $('#commentList').scrollTop(document.getElementById('commentList').scrollHeight);
+}
+
+function showUserNum(num){
+	$("#userNum").html(num);
+}
+
+function htmlspecialchars(str)    
+{    
+    str = str.replace(/&/g, '&amp;');  
+    str = str.replace(/</g, '&lt;');  
+    str = str.replace(/>/g, '&gt;');  
+    str = str.replace(/"/g, '&quot;');  
+    str = str.replace(/'/g, '&#039;');  
+    return str;  
+}
+
+
+function onBodyReady(){
+
+	}
+
+
+</script>
+
+<div id="HQPlugin"></div>
+<script type="text/javascript">
+function CallExternalFunc(param,name){try{eval(name+'(\''+param+'\')');}catch(e){}}
+</script>
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2a260e686d513f45bbeb5238d8c91576' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</body>
+</html>
